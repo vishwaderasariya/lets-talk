@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Card, Col, Form, Input, message, Row } from "antd";
+import { Button, Card, Col, Form, Input, message, Radio, Row } from "antd";
 import { Link } from "react-router-dom";
 import { signInWithGoogle, signup } from "../helpers/auth";
 import { auth, db } from "../services/firebase";
@@ -64,7 +64,10 @@ function Signup() {
                 <Input></Input>
               </Form.Item>
               <Form.Item label="Gender" name="gender">
-                <Input></Input>
+                <Radio.Group>
+                  <Radio value="male">Male</Radio>
+                  <Radio vale="female">Female</Radio>
+                </Radio.Group>
               </Form.Item>
               <Form.Item label="PhoneNumber" name="phoneNumber">
                 <Input></Input>

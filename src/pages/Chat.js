@@ -1,4 +1,14 @@
-import { Button, Input, Form, message, Card, Row, Col, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Form,
+  message,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Divider,
+} from "antd";
 import React from "react";
 import { auth, db } from "../services/firebase";
 import moment from "moment";
@@ -70,7 +80,10 @@ function Chat() {
             {chats.map((chat) => {
               return (
                 <>
-                  {chat.senderInfo.name}
+                  <Typography.Text strong>
+                    {chat.senderInfo.name}
+                  </Typography.Text>
+
                   <Typography.Text
                     style={{ backgroundColor: "#dbe3e5", lineHeight: "2" }}
                     key={chat.timestamp}

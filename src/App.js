@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { auth } from "./services/firebase";
 import { PrivateRoute, PublicRoute } from "./helpers/routes";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [loading, setLoading] = React.useState(false);
@@ -38,6 +39,12 @@ function App() {
     <Router>
       <Switch>
         <Route exact path="/" component={Home}></Route>
+        <PrivateRoute
+          exact
+          path="/dashboard"
+          authenticated={authenticated}
+          component={Dashboard}
+        ></PrivateRoute>
         <PrivateRoute
           exact
           path="/chat"
