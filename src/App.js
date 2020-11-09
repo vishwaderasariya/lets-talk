@@ -47,7 +47,7 @@ function App() {
         ></PrivateRoute>
         <PrivateRoute
           exact
-          path="/chat"
+          path="/chat/:userId"
           authenticated={authenticated}
           component={Chat}
         ></PrivateRoute>

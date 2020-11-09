@@ -1,17 +1,23 @@
 import { FrownFilled } from "@ant-design/icons";
-import { List, Typography } from "antd";
+import { Button, Card, Col, List, Row, Typography } from "antd";
 import React from "react";
-import { db } from "../services/firebase";
+import { Link, Redirect } from "react-router-dom";
+import { auth, db } from "../services/firebase";
 
 function Dashboard() {
   const [loading, setLoading] = React.useState(false);
   const [users, setUsers] = React.useState([]);
+
   function getUsers() {
     setLoading(true);
     let users = [];
+
     db.ref("users").on("value", (snapshot) => {
       snapshot.forEach((snap) => {
-        users.push(snap.val());
+        if (snap.val().email === auth().currentUser.email) {
+          return;
+        }
+        users.push({ ...snap.val(), id: snap.key });
       });
     });
     const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
@@ -20,6 +26,7 @@ function Dashboard() {
       setLoading(false);
     });
   }
+
   React.useEffect(() => {
     getUsers();
   }, []);
@@ -29,19 +36,36 @@ function Dashboard() {
   } else
     return (
       <div>
-        {users.length ? (
-          <List
-            bordered
-            dataSource={users}
-            renderItem={(item) => {
-              return (
-                <List.Item>
-                  <Typography.Text>{item.name}</Typography.Text>
-                </List.Item>
-              );
-            }}
-          />
-        ) : null}
+        <Row justify="center">
+          <Col span={12}>
+            <Card>
+              {users.length ? (
+                <List
+                  bordered
+                  dataSource={users}
+                  renderItem={(item) => {
+                    return (
+                      <List.Item>
+                        <Typography.Text strong style={{ fontSize: 21 }}>
+                          <Link to={`/chat/${item.id}`}>{item.name}</Link>
+                        </Typography.Text>
+                      </List.Item>
+                    );
+                  }}
+                />
+              ) : null}
+            </Card>
+            <p>Logged in as: {auth().currentUser.email} </p>
+            <Button
+              type="primary"
+              onClick={() => {
+                auth().signOut();
+              }}
+            >
+              sign out
+            </Button>
+          </Col>
+        </Row>
       </div>
     );
 }

@@ -13,8 +13,11 @@ import React from "react";
 import { auth, db } from "../services/firebase";
 import moment from "moment";
 import Text from "antd/lib/typography/Text";
+import { useParams } from "react-router-dom";
 
 function Chat() {
+  const { userId } = useParams();
+  console.log(userId);
   async function handleSubmit({ content }) {
     setContent(content);
 
@@ -24,7 +27,7 @@ function Chat() {
         timestamp: Date.now(),
         time: moment().calendar(),
         from: auth().currentUser.uid,
-
+        to: userId,
         //name: auth().currentUser.name,
       });
 
@@ -44,13 +47,22 @@ function Chat() {
     try {
       db.ref("chats").on("value", (snapshot) => {
         let chats = [];
+
         snapshot.forEach((snap) => {
-          db.ref(`users/${snap.val().from}`).on("value", (snapshot) => {
-            chats.push({
-              ...snap.val(),
-              senderInfo: snapshot.val(),
-            });
-          });
+          if (
+            snap.val().from == userId ||
+            snap.val().from == auth().currentUser.uid
+          )
+            if (
+              snap.val().to == userId ||
+              snap.val().to == auth().currentUser.uid
+            )
+              db.ref(`users/${snap.val().from}`).on("value", (snapshot) => {
+                chats.push({
+                  ...snap.val(),
+                  senderInfo: snapshot.val(),
+                });
+              });
         });
         setChats(chats);
       });
@@ -83,25 +95,26 @@ function Chat() {
                   <Typography.Text strong>
                     {chat.senderInfo.name}
                   </Typography.Text>
-
-                  <Typography.Text
-                    style={{ backgroundColor: "#dbe3e5", lineHeight: "2" }}
-                    key={chat.timestamp}
-                  >
-                    {chat.content}
-                    <Row justify="end">
-                      <Col>
-                        <Text
-                          style={{
-                            fontSize: "12px",
-                            opacity: 0.5,
-                          }}
-                        >
-                          {chat.time}
-                        </Text>
-                      </Col>
-                    </Row>
-                  </Typography.Text>
+                  <div>
+                    <Typography.Text
+                      style={{ lineHeight: "2" }}
+                      key={chat.timestamp}
+                    >
+                      {chat.content}
+                      <Row justify="end">
+                        <Col>
+                          <Text
+                            style={{
+                              fontSize: "12px",
+                              opacity: 0.5,
+                            }}
+                          >
+                            {chat.time}
+                          </Text>
+                        </Col>
+                      </Row>
+                    </Typography.Text>
+                  </div>
                 </>
               );
             })}

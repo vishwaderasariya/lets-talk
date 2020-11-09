@@ -14,19 +14,19 @@ function Signup() {
     age,
     gender,
   }) {
-    console.log(email, password);
-
     await signup(email, password)
       .then(() => {
         message.success("Account created succesfully");
-
-        db.ref("users").child(auth().currentUser.uid).set({
-          email,
-          name,
-          phoneNumber,
-          age,
-          gender,
-        });
+        console.log(auth().currentUser.uid);
+        db.ref("users")
+          .child(auth().currentUser.uid)
+          .set({
+            email,
+            name,
+            phoneNumber,
+            age,
+            gender: gender || "female",
+          });
       })
       .catch((error) => {
         message.error(error.message);
